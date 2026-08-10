@@ -1,0 +1,3 @@
+export const MUG_UNIT_PRICE_CENTS = 3_990;
+export const BUSINESS_DISCOUNT_BPS = 2_000;
+export const BUSINESS_MIN_QUANTITY = 10;
