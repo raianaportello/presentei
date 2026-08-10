@@ -8,6 +8,16 @@ export const products: ProductDetail[] = [
 ];
 
 export const localProductRepository: ProductRepository = {
-  async listActive() { return products.map(({ category: _category, variants: _variants, images: _images, ...product }) => product); },
+  async listActive() {
+    return products.map((product) => ({
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      description: product.description,
+      priceCents: product.priceCents,
+      imageUrl: product.imageUrl,
+      imageAlt: product.imageAlt,
+    }));
+  },
   async findActiveBySlug(slug) { return products.find((product) => product.slug === slug) ?? null; },
 };

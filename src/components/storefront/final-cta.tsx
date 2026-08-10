@@ -1,0 +1,3 @@
+import { ButtonLink } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
+export function FinalCta() { return <section className="bg-[var(--brand-orange)] py-20 text-white sm:py-28"><Container className="text-center"><p className="text-sm font-black uppercase tracking-[.18em]">Tem alguém especial esperando</p><h2 className="font-display mx-auto mt-5 max-w-4xl text-5xl font-black leading-[.9] tracking-[-.07em] sm:text-7xl">Não compre qualquer presente. Crie o que só você poderia dar.</h2><ButtonLink href="/personalizar" variant="dark" className="mt-10">Criar meu presente</ButtonLink></Container></section>; }

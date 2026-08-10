@@ -1,0 +1,6 @@
+import Link from "next/link";
+import { Container } from "@/components/ui/container";
+
+const categories = ["Com fotos", "Para família", "Para quem você ama", "Para empresas"];
+
+export function CategoryGrid() { return <section className="py-20 sm:py-28"><Container><p className="text-xs font-black uppercase tracking-[.2em] text-[var(--brand-orange-deep)]">Encontre pelo motivo</p><div className="mt-5 flex items-end justify-between gap-6"><h2 className="font-display max-w-2xl text-5xl font-black leading-none tracking-[-.06em]">Presentes começam por alguém.</h2><Link href="/produtos" className="hidden text-sm font-black underline underline-offset-4 sm:block">Ver todos</Link></div><div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{categories.map((category, index) => <Link key={category} href={`/produtos?categoria=${encodeURIComponent(category)}`} className="group flex min-h-48 flex-col justify-between rounded-[var(--radius-md)] border border-[var(--brand-border)] bg-white p-6 transition-transform hover:-translate-y-1 focus-visible:outline-3 focus-visible:outline-[var(--brand-orange)]"><span className="text-3xl" aria-hidden>{["📷", "🏠", "🧡", "🏢"][index]}</span><span className="font-display text-2xl font-black tracking-[-.04em] group-hover:text-[var(--brand-orange-deep)]">{category} →</span></Link>)}</div></Container></section>; }
