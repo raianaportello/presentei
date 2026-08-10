@@ -1,0 +1,13 @@
+:root {
+  --brand-orange: #ff620f;
+  --brand-orange-deep: #d94c00;
+  --brand-orange-soft: #ffe1ce;
+  --brand-black: #171717;
+  --brand-white: #ffffff;
+  --brand-surface: #fffaf5;
+  --brand-muted: #675d56;
+  --brand-border: #eadfd6;
+  --radius-sm: 0.75rem;
+  --radius-md: 1.25rem;
+  --radius-pill: 999px;
+}
