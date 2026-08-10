@@ -1,5 +1,22 @@
+import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { ButtonLink } from "@/components/ui/button";
 import type { ProductDetail } from "@/modules/catalog/types";
 import { formatMoney } from "@/modules/pricing/format-money";
 
-export function ProductPurchasePanel({ product }: { product: ProductDetail }) { return <div><p className="text-xs font-black uppercase tracking-[.18em] text-[var(--brand-orange-deep)]">{product.category}</p><h1 className="font-display mt-4 text-5xl font-black tracking-[-.06em] sm:text-6xl">{product.name}</h1><p className="mt-6 text-lg leading-8 text-[var(--brand-muted)]">{product.description}</p><p className="mt-7 text-3xl font-black">{formatMoney(product.priceCents)}</p><p className="mt-2 text-sm font-bold text-[var(--brand-muted)]">Preço fixo. O frete é calculado pelo seu CEP.</p><div className="mt-8 rounded-[var(--radius-md)] border border-[var(--brand-border)] bg-white p-5"><label htmlFor="cep" className="text-sm font-extrabold">Quer saber o frete?</label><div className="mt-3 flex gap-2"><input id="cep" inputMode="numeric" placeholder="00000-000" className="min-h-12 min-w-0 flex-1 rounded-full border border-[var(--brand-border)] px-4 outline-none focus:border-[var(--brand-orange)]" /><button type="button" className="rounded-full bg-[var(--brand-black)] px-5 text-sm font-extrabold text-white">Calcular</button></div><p className="mt-3 text-xs text-[var(--brand-muted)]">A cotação será ativada junto ao checkout.</p></div><ButtonLink href={`/personalizar?produto=${product.slug}`} className="mt-6 w-full">Personalizar esta caneca</ButtonLink><ul className="mt-6 grid gap-3 text-sm font-bold"><li>✓ Arte criada do seu jeito</li><li>✓ Você aprova antes de comprar</li><li>✓ Produzida com carinho em Curitiba</li></ul></div>; }
+export function ProductPurchasePanel({ product }: { product: ProductDetail }) {
+  return <div>
+    <p className="text-xs font-black uppercase tracking-[.18em] text-[var(--brand-orange-deep)]">{product.category}</p>
+    <h1 className="font-display mt-4 text-5xl font-black tracking-[-.06em] sm:text-6xl">{product.name}</h1>
+    <p className="mt-6 text-lg leading-8 text-[var(--brand-muted)]">{product.description}</p>
+    <p className="mt-7 text-3xl font-black">{formatMoney(product.priceCents)}</p>
+    <p className="mt-2 text-sm font-bold text-[var(--brand-muted)]">Preço fixo. O frete é calculado pelo seu CEP.</p>
+    <div className="mt-8 rounded-[var(--radius-md)] border border-[var(--brand-border)] bg-white p-5">
+      <label htmlFor="cep" className="text-sm font-extrabold">Quer saber o frete?</label>
+      <div className="mt-3 flex gap-2"><input id="cep" inputMode="numeric" placeholder="00000-000" className="min-h-12 min-w-0 flex-1 rounded-full border border-[var(--brand-border)] px-4 outline-none focus:border-[var(--brand-orange)]" /><button type="button" className="rounded-full bg-[var(--brand-black)] px-5 text-sm font-extrabold text-white">Calcular</button></div>
+      <p className="mt-3 text-xs text-[var(--brand-muted)]">A cotação será ativada junto ao checkout.</p>
+    </div>
+    <ButtonLink href={`/personalizar?produto=${product.slug}`} className="mt-6 w-full">Personalizar esta caneca</ButtonLink>
+    <AddToCartButton productId={product.id} />
+    <ul className="mt-6 grid gap-3 text-sm font-bold"><li>✓ Arte criada do seu jeito</li><li>✓ Você aprova antes de comprar</li><li>✓ Produzida com carinho em Curitiba</li></ul>
+  </div>;
+}
