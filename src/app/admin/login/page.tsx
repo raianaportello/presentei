@@ -1,0 +1,2 @@
+import { LoginForm } from "./login-form";
+export default function AdminLoginPage() { return <section className="min-h-[70vh] px-5 py-16"><div className="mb-8 text-center"><p className="text-xs font-black uppercase tracking-[.2em] text-[var(--brand-orange-deep)]">Acesso restrito</p><h1 className="font-display mt-3 text-4xl font-black">Administração Presentei</h1><p className="mt-3 text-[var(--brand-muted)]">Entre com suas credenciais administrativas.</p></div><LoginForm /></section>; }

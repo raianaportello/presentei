@@ -1,0 +1,2 @@
+import type { ReactNode } from "react";
+export function AdminShell({ children }: { children: ReactNode }) { return <section className="min-h-[70vh] bg-[#f4f4f4] py-12"><div className="mx-auto max-w-6xl px-5"><header className="mb-8"><p className="text-xs font-black uppercase tracking-[.2em] text-[var(--brand-orange-deep)]">Área protegida</p><h1 className="font-display mt-2 text-4xl font-black">Painel Presentei</h1></header>{children}</div></section>; }
