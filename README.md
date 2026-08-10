@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Presentei
 
-## Getting Started
+Fundação comercial da loja de canecas personalizadas Presentei. O site atende pessoas e empresas com um fluxo direto, preço fixo de R$ 39,90 e desconto automático de 20% para pedidos empresariais a partir de 10 canecas. O frete é sempre calculado separadamente.
 
-First, run the development server:
+## Requisitos
 
-```bash
+- Node.js 20.9 ou superior
+- npm
+- PostgreSQL para a futura persistência do catálogo e pedidos; a Fase 1 usa um catálogo local para funcionar sem banco
+
+## Executar localmente
+
+```powershell
+Copy-Item .env.example .env.local
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra `http://localhost:3000`. Configure em `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NEXT_PUBLIC_SITE_URL`: URL pública do site;
+- `AUTH_SECRET`: valor aleatório longo para assinar sessões;
+- `ADMIN_EMAIL`: e-mail do administrador;
+- `ADMIN_PASSWORD_HASH`: senha administrativa em hash bcrypt;
+- `DATABASE_URL`: conexão PostgreSQL preparada para as próximas fases.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Para gerar um hash bcrypt sem registrar a senha no projeto:
 
-## Learn More
+```powershell
+node -e "require('bcryptjs').hash(process.argv[1], 12).then(console.log)" "SUA-SENHA"
+```
 
-To learn more about Next.js, take a look at the following resources:
+O painel protegido fica em `/admin`. Sem as variáveis administrativas corretas, nenhuma credencial é aceita.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Banco de dados
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+O schema Prisma pode ser validado agora:
 
-## Deploy on Vercel
+```powershell
+npx prisma validate
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Quando a persistência PostgreSQL for ativada, crie e aplique a primeira migração com `npx prisma migrate dev --name init`. O catálogo visual da Fase 1 permanece em `src/modules/catalog/local-products.ts`; a troca pelo repositório Prisma deve ocorrer antes de produção com gestão de estoque.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Qualidade
+
+```powershell
+npm test
+npm run test:e2e
+npm run lint
+npm run typecheck
+npm run build
+```
+
+O Playwright usa a porta 3100 para não conflitar com o servidor de desenvolvimento. Caso o Chromium de teste ainda não exista, execute `npx playwright install chromium` uma vez.
+
+## Rotas principais
+
+- `/`: homepage para pessoas e empresas
+- `/produtos`: catálogo
+- `/produtos/[slug]`: detalhe e adição ao carrinho
+- `/empresas`: simulador e contato via WhatsApp
+- `/carrinho`: carrinho local persistente e desconto empresarial
+- `/personalizar`: introdução ao personalizador da próxima fase
+- `/admin`: painel protegido e somente leitura
+
+O checkout, o cálculo real de frete, a geração de arte e a persistência de pedidos pertencem às próximas fases e aparecem na interface como indisponíveis, sem botões enganosos.
