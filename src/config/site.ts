@@ -3,6 +3,7 @@ export const siteConfig = {
   description: "Presentes personalizados para pessoas e empresas.",
   priceLabel: "R$ 39,90",
   instagram: "https://www.instagram.com/presentei.store",
+  whatsapp: "https://w.app/presentei",
   navigation: [
     { label: "Presentes", href: "/produtos" },
     { label: "Como funciona", href: "/#como-funciona" },
