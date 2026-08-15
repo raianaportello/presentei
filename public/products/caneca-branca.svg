@@ -1,1 +1,83 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><rect width="640" height="640" rx="72" fill="#fff1e8"/><ellipse cx="312" cy="510" rx="188" ry="28" fill="#dbbba7" opacity=".45"/><path d="M174 160h288v286c0 52-42 94-94 94H268c-52 0-94-42-94-94z" fill="#fff" stroke="#171717" stroke-width="12"/><path d="M462 224h38c72 0 72 142 0 142h-38" fill="none" stroke="#171717" stroke-width="22"/><rect x="220" y="260" width="196" height="126" rx="24" fill="#ff620f"/><text x="318" y="314" text-anchor="middle" font-family="Arial" font-size="34" font-weight="900" fill="#fff">FEITO</text><text x="318" y="355" text-anchor="middle" font-family="Arial" font-size="34" font-weight="900" fill="#fff">POR VOCÊ</text></svg>
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <defs>
+    <radialGradient id="bg" cx="48%" cy="44%" r="64%">
+      <stop offset="0%" stop-color="#fffaf6"/>
+      <stop offset="100%" stop-color="#f4ece4"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%"   stop-color="#b0a9a4"/>
+      <stop offset="12%"  stop-color="#d6d0cc"/>
+      <stop offset="34%"  stop-color="#f2efec"/>
+      <stop offset="54%"  stop-color="#ffffff"/>
+      <stop offset="70%"  stop-color="#eae5e2"/>
+      <stop offset="100%" stop-color="#c8c2be"/>
+    </linearGradient>
+    <linearGradient id="handle" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#cec8c4"/>
+      <stop offset="50%"  stop-color="#edeae7"/>
+      <stop offset="100%" stop-color="#bdb7b3"/>
+    </linearGradient>
+    <radialGradient id="inner" cx="42%" cy="33%" r="62%">
+      <stop offset="0%"   stop-color="#9e9690"/>
+      <stop offset="100%" stop-color="#464040"/>
+    </radialGradient>
+    <linearGradient id="base" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#a6a09c"/>
+      <stop offset="50%"  stop-color="#c6c2be"/>
+      <stop offset="100%" stop-color="#b4aeaa"/>
+    </linearGradient>
+    <filter id="shadow" x="-28%" y="-22%" width="156%" height="156%">
+      <feDropShadow dx="2" dy="18" stdDeviation="17" flood-color="rgba(26,9,3,0.25)"/>
+    </filter>
+    <filter id="heartglow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <ellipse cx="178" cy="362" rx="108" ry="12" fill="rgba(18,7,2,0.14)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="82" y="64" width="190" height="268" fill="url(#body)"/>
+    <ellipse cx="177" cy="332" rx="95" ry="14" fill="url(#base)"/>
+    <rect x="82" y="318" width="190" height="14" fill="url(#body)"/>
+    <ellipse cx="177" cy="64" rx="95" ry="20" fill="url(#body)"/>
+
+    <path d="M 270 160 C 326 160,350 190,350 230 C 350 270,326 300,270 300"
+          stroke="url(#handle)" stroke-width="26" stroke-linecap="round"/>
+    <path d="M 270 170 C 316 170,334 196,334 230 C 334 264,316 290,270 290"
+          stroke="rgba(70,35,12,0.09)" stroke-width="12" stroke-linecap="round"/>
+    <path d="M 270 163 C 324 163,347 192,347 230"
+          stroke="rgba(255,255,255,0.68)" stroke-width="5" stroke-linecap="round"/>
+
+    <ellipse cx="177" cy="64" rx="84" ry="17" fill="url(#inner)"/>
+    <ellipse cx="177" cy="60" rx="94" ry="20" fill="none"
+             stroke="rgba(255,255,255,0.93)" stroke-width="7"/>
+    <ellipse cx="177" cy="65" rx="84" ry="17" fill="none"
+             stroke="rgba(0,0,0,0.05)" stroke-width="3"/>
+
+    <!-- Brushstroke heart art element -->
+    <g filter="url(#heartglow)" transform="translate(177,202)">
+      <path d="M0,-30 C8,-47,36,-47,36,-23 C36,0,0,30,0,30 C0,30,-36,0,-36,-23 C-36,-47,-8,-47,0,-30 Z"
+            fill="#ff620f" opacity="0.93"/>
+      <path d="M0,-21 C5,-33,24,-33,24,-16 C24,0,0,20,0,20 C0,20,-24,0,-24,-16 C-24,-33,-5,-33,0,-21 Z"
+            fill="#ff7e36" opacity="0.45"/>
+      <path d="M-9,-26 C-3,-38,14,-38,14,-24"
+            stroke="rgba(255,255,255,0.38)" stroke-width="4" stroke-linecap="round"/>
+    </g>
+
+    <path d="M 205 68 C 220,84,226,168,223,248 C 221,296,216,328,210,344"
+          stroke="rgba(255,255,255,0.44)" stroke-width="38" stroke-linecap="round"/>
+    <path d="M 203 68 C 217,84,222,168,219,248 C 217,296,213,328,207,344"
+          stroke="rgba(255,255,255,0.67)" stroke-width="11" stroke-linecap="round"/>
+    <path d="M 204 70 C 217,84,221,130,219,172"
+          stroke="rgba(255,255,255,0.88)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 148 66 C 154,112,156,210,154,320"
+          stroke="rgba(255,255,255,0.09)" stroke-width="44" stroke-linecap="round"/>
+
+    <rect x="82" y="64" width="20" height="268" fill="rgba(0,0,0,0.055)"/>
+    <rect x="252" y="64" width="20" height="268" fill="rgba(0,0,0,0.025)"/>
+    <rect x="82" y="296" width="190" height="36" fill="rgba(0,0,0,0.038)"/>
+  </g>
+</svg>

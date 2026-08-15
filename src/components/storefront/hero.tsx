@@ -1,5 +1,6 @@
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { MugCeramic } from "@/components/storefront/mug-ceramic";
 
 const trust = [
   "R$ 39,90 por caneca",
@@ -94,15 +95,16 @@ export function Hero() {
           </div>
 
           {/* Mug + price badge, centered */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-7">
-            {/* CSS mug */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
+            {/* Ceramic mug */}
             <div
-              className="hero-mug hero-mug-float relative grid h-72 w-56 place-items-center rounded-b-[4rem] rounded-t-2xl bg-white text-center"
-              style={{ boxShadow: "var(--shadow-mug)" }}
+              className="hero-mug-float"
+              style={{ filter: "drop-shadow(0 28px 52px rgba(40,12,0,0.48))" }}
             >
-              <span className="font-display text-[2rem] font-black leading-[.9] tracking-[-.06em] text-[var(--brand-orange)]">
-                FEITO<br />POR VOCÊ
-              </span>
+              <MugCeramic
+                idPrefix="hero"
+                className="h-64 w-auto sm:h-72"
+              />
             </div>
 
             {/* Price badge */}
