@@ -6,24 +6,80 @@ import { Container } from "@/components/ui/container";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--brand-border)] bg-white/95 backdrop-blur">
-      <Container className="flex min-h-20 items-center justify-between gap-4">
-        <Link href="/" aria-label="Presentei — início" className="shrink-0 rounded-full focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[var(--brand-orange)]">
-          <Image src="/brand/presentei-logo.jpeg" alt="" width={58} height={58} className="h-14 w-14 rounded-full object-cover" priority />
+    <header className="sticky top-0 z-50 border-b border-[var(--brand-border-soft)] bg-white/90 backdrop-blur-md backdrop-saturate-150">
+      <Container className="flex h-[4.5rem] items-center justify-between gap-4">
+
+        {/* Logo */}
+        <Link
+          href="/"
+          aria-label="Presentei — início"
+          className="shrink-0 rounded-full transition-opacity duration-[var(--dur-fast)] hover:opacity-85"
+        >
+          <Image
+            src="/brand/presentei-logo.jpeg"
+            alt=""
+            width={52}
+            height={52}
+            className="h-12 w-12 rounded-full object-cover shadow-[var(--shadow-sm)]"
+            priority
+          />
         </Link>
-        <nav aria-label="Navegação principal" className="hidden items-center gap-7 md:flex">
+
+        {/* Nav */}
+        <nav aria-label="Navegação principal" className="hidden items-center gap-1 md:flex">
           {siteConfig.navigation.map((item) => (
-            <Link key={item.href} href={item.href} className="text-sm font-bold text-[var(--brand-black)] underline-offset-6 hover:text-[var(--brand-orange-deep)] hover:underline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[var(--brand-orange)]">
+            <Link
+              key={item.href}
+              href={item.href}
+              className={[
+                "group relative px-4 py-2 text-[0.84rem] font-bold text-[var(--brand-muted)]",
+                "rounded-full transition-colors duration-[var(--dur-fast)]",
+                "hover:bg-[var(--brand-surface)] hover:text-[var(--brand-black)]",
+              ].join(" ")}
+            >
               {item.label}
+              <span
+                aria-hidden
+                className="absolute bottom-1.5 left-4 right-4 h-px scale-x-0 rounded-full bg-[var(--brand-orange)] transition-transform duration-[var(--dur-base)] ease-[var(--ease-spring)] group-hover:scale-x-100"
+              />
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
-          <Link href="/carrinho" className="hidden min-h-11 items-center rounded-full px-4 text-sm font-bold hover:bg-[var(--brand-surface)] focus-visible:outline-3 focus-visible:outline-[var(--brand-orange)] sm:inline-flex">
+
+        {/* Actions */}
+        <div className="flex items-center gap-1.5">
+          <Link
+            href="/carrinho"
+            className={[
+              "hidden items-center gap-2 rounded-full px-4 py-2 text-[0.84rem] font-bold",
+              "text-[var(--brand-muted)] transition-colors duration-[var(--dur-fast)]",
+              "hover:bg-[var(--brand-surface)] hover:text-[var(--brand-black)] sm:inline-flex",
+            ].join(" ")}
+          >
+            {/* Cart icon */}
+            <svg
+              aria-hidden
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
             Carrinho
           </Link>
-          <ButtonLink href="/personalizar" className="px-4 sm:px-6">Criar com IA</ButtonLink>
+
+          <ButtonLink href="/personalizar" size="sm" className="px-5">
+            Criar com IA
+          </ButtonLink>
         </div>
+
       </Container>
     </header>
   );

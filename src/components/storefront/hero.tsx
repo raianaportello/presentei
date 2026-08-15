@@ -1,28 +1,128 @@
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 
+const trust = [
+  "R$ 39,90 por caneca",
+  "Desconto empresarial 20%",
+  "Frete calculado no final",
+];
+
 export function Hero() {
   return (
-    <section className="overflow-hidden bg-[var(--brand-surface)]">
-      <Container className="grid min-h-[690px] items-stretch lg:grid-cols-[1.08fr_.92fr]">
-        <div className="flex flex-col justify-center py-16 lg:py-24 lg:pr-14">
-          <p className="mb-6 text-xs font-black uppercase tracking-[.2em] text-[var(--brand-orange-deep)]">Transforme afeto em presente</p>
-          <h1 className="font-display max-w-[760px] text-[clamp(3.7rem,8vw,7.4rem)] font-black leading-[.82] tracking-[-.075em] text-[var(--brand-black)]">
-            Uma ideia.<br /><span className="text-[var(--brand-orange)]">Um presente</span><br />só seu.
+    <section
+      className="relative overflow-hidden"
+      style={{ background: "var(--gradient-hero)" }}
+    >
+      <Container className="grid min-h-[min(100svh,840px)] items-stretch lg:grid-cols-[1.1fr_.9fr]">
+
+        {/* ── Left: editorial content ── */}
+        <div className="flex flex-col justify-center py-20 lg:py-28 lg:pr-16">
+
+          {/* Overline */}
+          <div className="hero-text-1 mb-7 flex items-center gap-2.5">
+            <span aria-hidden className="pulse-dot block h-2 w-2 rounded-full bg-[var(--brand-orange)]" />
+            <p className="text-[0.68rem] font-black uppercase tracking-[0.24em] text-[var(--brand-orange-deep)]">
+              Presente personalizado desde a primeira ideia
+            </p>
+          </div>
+
+          {/* Headline */}
+          <h1 className="hero-text-2 font-display max-w-[800px] text-[clamp(3.8rem,8.5vw,7.5rem)] font-black leading-[.82] tracking-[-.08em] text-[var(--brand-black)]">
+            Uma ideia.<br />
+            <span className="text-[var(--brand-orange)]">Um presente</span><br />
+            só seu.
           </h1>
-          <p className="mt-8 max-w-xl text-lg leading-8 text-[var(--brand-muted)]">Você conta a ideia. A Presentei transforma em uma caneca feita para emocionar, celebrar ou marcar presença.</p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row"><ButtonLink href="/personalizar">Criar meu presente</ButtonLink><ButtonLink href="/produtos" variant="secondary">Ver presentes</ButtonLink></div>
-          <p className="mt-6 flex items-center gap-2 text-sm font-bold"><span aria-hidden className="grid h-7 w-7 place-items-center rounded-full bg-[var(--brand-orange-soft)]">✓</span> Caneca por R$ 39,90. Você só confere o frete.</p>
+
+          {/* Body */}
+          <p className="hero-text-3 mt-8 max-w-lg text-lg leading-8 text-[var(--brand-muted)]">
+            Você conta a história. A Presentei transforma em uma caneca feita
+            para emocionar, celebrar e ser lembrada.
+          </p>
+
+          {/* CTAs */}
+          <div className="hero-text-4 mt-10 flex flex-wrap gap-3">
+            <ButtonLink href="/personalizar" size="lg">
+              Criar meu presente
+            </ButtonLink>
+            <ButtonLink href="/produtos" variant="secondary" size="lg">
+              Ver coleção
+            </ButtonLink>
+          </div>
+
+          {/* Trust strip */}
+          <div className="hero-text-5 mt-10 flex flex-wrap items-center gap-x-6 gap-y-2">
+            {trust.map((item) => (
+              <p
+                key={item}
+                className="flex items-center gap-2 text-[0.8rem] font-bold text-[var(--brand-muted)]"
+              >
+                <span
+                  aria-hidden
+                  className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[var(--brand-orange-soft)] text-[9px] font-black text-[var(--brand-orange-deep)]"
+                >
+                  ✓
+                </span>
+                {item}
+              </p>
+            ))}
+          </div>
         </div>
-        <div className="relative min-h-[480px] overflow-hidden bg-[var(--brand-orange)] lg:-mr-[max(1.25rem,calc((100vw-1240px)/2))]">
-          <div aria-hidden className="absolute -left-8 top-12 font-display text-[9rem] font-black leading-[.72] tracking-[-.09em] text-white/15 sm:text-[12rem]">SUA<br />IDEIA</div>
-          <div className="absolute inset-0 grid place-items-center">
-            <div className="hero-mug relative grid h-64 w-52 -rotate-6 place-items-center rounded-b-[4rem] rounded-t-2xl bg-white text-center shadow-[0_32px_55px_rgba(92,29,0,.28)] sm:h-80 sm:w-64">
-              <span className="font-display text-3xl font-black leading-[.9] tracking-[-.06em] text-[var(--brand-orange)] sm:text-4xl">FEITO<br />POR VOCÊ</span>
+
+        {/* ── Right: orange panel ── */}
+        <div
+          className="hero-panel relative min-h-[520px] overflow-hidden bg-[var(--brand-orange)] lg:-mr-[max(1.25rem,calc((100vw-1240px)/2))]"
+        >
+          {/* Dot-grid texture */}
+          <div aria-hidden className="dot-grid absolute inset-0" />
+
+          {/* Decorative rings */}
+          <div
+            aria-hidden
+            className="absolute -right-28 -top-28 h-[520px] w-[520px] rounded-full border-2 border-white/20"
+          />
+          <div
+            aria-hidden
+            className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full border border-white/15"
+          />
+
+          {/* Background word-mark */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -left-2 top-8 select-none font-display text-[8.5rem] font-black leading-[.7] tracking-[-.1em] text-white/10 sm:text-[11rem]"
+          >
+            SUA<br />IDEIA
+          </div>
+
+          {/* Mug + price badge, centered */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-7">
+            {/* CSS mug */}
+            <div
+              className="hero-mug hero-mug-float relative grid h-72 w-56 place-items-center rounded-b-[4rem] rounded-t-2xl bg-white text-center"
+              style={{ boxShadow: "var(--shadow-mug)" }}
+            >
+              <span className="font-display text-[2rem] font-black leading-[.9] tracking-[-.06em] text-[var(--brand-orange)]">
+                FEITO<br />POR VOCÊ
+              </span>
+            </div>
+
+            {/* Price badge */}
+            <div
+              className="float-subtle rounded-full bg-white px-5 py-2.5"
+              style={{ boxShadow: "var(--shadow-lg)" }}
+            >
+              <p className="text-sm font-black text-[var(--brand-black)]">
+                <span className="text-[var(--brand-orange)]">R$ 39,90</span>
+                {" "}· você só confere o frete
+              </p>
             </div>
           </div>
-          <p className="absolute bottom-7 left-7 max-w-[15rem] text-sm font-extrabold leading-5 text-white">Da primeira ideia ao presente pronto, sem complicação.</p>
+
+          {/* Bottom caption */}
+          <p className="absolute bottom-7 left-7 max-w-[15rem] text-sm font-extrabold leading-5 text-white/90">
+            Da primeira ideia ao presente pronto, sem complicação.
+          </p>
         </div>
+
       </Container>
     </section>
   );

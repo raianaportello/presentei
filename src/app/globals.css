@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
 
+/* ── Base theme ──────────────────────────────────────── */
 :root {
   --background: var(--brand-surface);
   --foreground: var(--brand-black);
@@ -9,37 +10,151 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-nunito);
+  --font-sans:    var(--font-nunito);
   --font-display: var(--font-bricolage);
+}
+
+/* ── Base styles ─────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-nunito), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 .font-display {
   font-family: var(--font-bricolage), sans-serif;
 }
 
-.hero-mug::after {
-  content: "";
-  position: absolute;
-  right: -4.5rem;
-  top: 4.5rem;
-  width: 5rem;
-  height: 7rem;
-  border: 1.35rem solid white;
-  border-left: 0;
-  border-radius: 0 4rem 4rem 0;
-}
-
+/* ── Selection ───────────────────────────────────────── */
 ::selection {
   background: var(--brand-orange-soft);
   color: var(--brand-black);
 }
 
+/* ── Focus rings ─────────────────────────────────────── */
+:focus-visible {
+  outline: 2.5px solid var(--brand-orange);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Scrollbar (Webkit) ──────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--brand-surface); }
+::-webkit-scrollbar-thumb {
+  background: var(--brand-border);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--brand-surface);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--brand-muted-light); }
+
+/* ── Keyframe animations ─────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50%       { transform: translateY(-10px) rotate(-6deg); }
+}
+
+@keyframes floatYSubtle {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+@keyframes pulseOrange {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.55; transform: scale(0.9); }
+}
+
+@keyframes shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Hero animation classes ──────────────────────────── */
+.hero-text-1 { animation: fadeSlideUp 0.7s var(--ease-spring) both; animation-delay: 0ms; }
+.hero-text-2 { animation: fadeSlideUp 0.7s var(--ease-spring) both; animation-delay: 90ms; }
+.hero-text-3 { animation: fadeSlideUp 0.7s var(--ease-spring) both; animation-delay: 180ms; }
+.hero-text-4 { animation: fadeSlideUp 0.7s var(--ease-spring) both; animation-delay: 270ms; }
+.hero-text-5 { animation: fadeSlideUp 0.7s var(--ease-spring) both; animation-delay: 360ms; }
+.hero-panel  { animation: fadeIn     0.9s var(--ease-smooth) both; animation-delay: 100ms; }
+
+/* ── Hero mug ────────────────────────────────────────── */
+.hero-mug::after {
+  content: "";
+  position: absolute;
+  right: -4.25rem;
+  top: 4.25rem;
+  width: 4.5rem;
+  height: 6.75rem;
+  border: 1.25rem solid white;
+  border-left: 0;
+  border-radius: 0 4rem 4rem 0;
+}
+
+.hero-mug-float {
+  animation: floatY 4.5s var(--ease-smooth) infinite;
+}
+
+/* ── Pulse indicator ─────────────────────────────────── */
+.pulse-dot {
+  animation: pulseOrange 2s ease infinite;
+}
+
+/* ── Float subtle ────────────────────────────────────── */
+.float-subtle {
+  animation: floatYSubtle 5s var(--ease-smooth) infinite;
+}
+
+/* ── Section reveal (scroll-driven, progressive) ─────── */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: fadeSlideUp linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+}
+
+/* ── Dot-grid pattern utility ────────────────────────── */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.14) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.dot-grid-dark {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ── Line clamp ──────────────────────────────────────── */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Reduced motion ──────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     scroll-behavior: auto !important;
