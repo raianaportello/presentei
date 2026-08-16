@@ -8,8 +8,13 @@ import "./globals.css";
 const display = Bricolage_Grotesque({ variable: "--font-bricolage", subsets: ["latin"] });
 const body = Nunito_Sans({ variable: "--font-nunito", subsets: ["latin"] });
 
+// `??` only guards null/undefined — an env var set to an empty string
+// (as happens on Vercel when the value is left blank) sails straight
+// through and crashes `new URL("")`. Guard against both.
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "http://localhost:3000";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl),
   title: { default: "Presentei | Presentes personalizados", template: "%s | Presentei" },
   description: "Transforme uma ideia, memória ou marca em uma caneca personalizada por R$ 39,90.",
   alternates: { canonical: "/" },
