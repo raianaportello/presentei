@@ -1,6 +1,6 @@
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { MugCeramic } from "@/components/storefront/mug-ceramic";
+import { MugShowcase } from "@/components/mug3d/mug-showcase";
 
 const trust = [
   "R$ 39,90 por caneca",
@@ -96,16 +96,8 @@ export function Hero() {
 
           {/* Mug + price badge, centered */}
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
-            {/* Ceramic mug */}
-            <div
-              className="hero-mug-float"
-              style={{ filter: "drop-shadow(0 28px 52px rgba(40,12,0,0.48))" }}
-            >
-              <MugCeramic
-                idPrefix="hero"
-                className="h-64 w-auto sm:h-72"
-              />
-            </div>
+            {/* Ceramic mug — live 3D, slow turntable */}
+            <MugShowcase className="h-[300px] w-full sm:h-[380px]" />
 
             {/* Price badge */}
             <div
