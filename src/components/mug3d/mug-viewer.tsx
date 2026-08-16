@@ -21,6 +21,8 @@ type Props = {
   artText?: string;
   /** Art came from DALL·E 3 and still carries a white background. */
   keyWhite?: boolean;
+  /** Artwork wraps the whole barrel, background included. */
+  fullBleed?: boolean;
   className?: string;
   /** Disable interaction and just turntable (hero / cards). */
   showcase?: boolean;
@@ -30,6 +32,7 @@ export function MugViewer({
   artImageUrl,
   artText,
   keyWhite = false,
+  fullBleed = false,
   className = "",
   showcase = false,
 }: Props) {
@@ -47,7 +50,7 @@ export function MugViewer({
         if (artImageUrl) {
           const img = await loadImage(artImageUrl);
           if (cancelled) return;
-          next = buildImageTexture(img, { keyWhite });
+          next = buildImageTexture(img, { keyWhite, fullBleed });
         } else if (artText && artText.trim()) {
           next = buildTextTexture(artText.trim());
         }
@@ -63,7 +66,7 @@ export function MugViewer({
 
     build();
     return () => { cancelled = true; };
-  }, [artImageUrl, artText, keyWhite]);
+  }, [artImageUrl, artText, keyWhite, fullBleed]);
 
   /* ── Release GPU memory on unmount ── */
   useEffect(() => () => { prevTexture.current?.dispose(); }, []);

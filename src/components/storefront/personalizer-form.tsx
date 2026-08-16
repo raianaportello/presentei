@@ -6,6 +6,8 @@
 import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { MugViewer } from "@/components/mug3d/mug-viewer";
+import { downloadPrintSheet, PRINT_SIZE } from "@/components/mug3d/print-export";
+import { loadImage } from "@/components/mug3d/art-texture";
 
 type Status = "idle" | "loading" | "done" | "error";
 
@@ -13,6 +15,11 @@ type Art = {
   url: string;
   keyWhite: boolean;
   conceito: string;
+  /** The expanded brief the art director model produced. */
+  promptUsado?: string;
+  direcao?: { titulo: string; descricao: string; paleta: string; estilo: string };
+  justificativa?: string;
+  totalAvaliados?: number;
 };
 
 const SUGGESTIONS = [
@@ -27,10 +34,11 @@ const SUGGESTIONS = [
 /** Rotating status lines so a 30s wait does not feel dead. */
 const LOADING_STEPS = [
   "Interpretando sua ideia…",
-  "Escolhendo a paleta de cores…",
-  "Desenhando os traços…",
+  "Rascunhando 10 conceitos…",
+  "Avaliando cada um…",
+  "Desenhando o escolhido…",
   "Ajustando para impressão…",
-  "Aplicando na cerâmica…",
+  "Envolvendo a cerâmica…",
 ];
 
 const SPECS: [string, string][] = [
@@ -39,12 +47,36 @@ const SPECS: [string, string][] = [
   ["Preço", "R$ 39,90"],
 ];
 
+/** Downscale before upload — a 12MP phone photo is pure waste here. */
+function readAndShrink(file: File, max = 1024): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Não consegui ler o arquivo."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Arquivo de imagem inválido."));
+      img.onload = () => {
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 export function PersonalizerForm() {
   const [conceito, setConceito] = useState("");
   const [art, setArt] = useState<Art | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [step, setStep] = useState(0);
+  const [reference, setReference] = useState<string | null>(null);
+  const [baixando, setBaixando] = useState(false);
 
   /* ── Cycle the loading copy ── */
   useEffect(() => {
@@ -55,6 +87,16 @@ export function PersonalizerForm() {
     );
     return () => clearInterval(id);
   }, [status]);
+
+  const pickReference = useCallback(async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      setReference(await readAndShrink(file));
+      setErrorMsg("");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Falha ao ler a imagem.");
+    }
+  }, []);
 
   const generate = useCallback(async () => {
     const texto = conceito.trim();
@@ -68,13 +110,17 @@ export function PersonalizerForm() {
       const res = await fetch("/api/gerar-arte", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ conceito: texto }),
+        body: JSON.stringify({ conceito: texto, referenceImage: reference }),
       });
 
       let data: {
         imageUrl?: string;
         error?: string;
         needsWhiteKeying?: boolean;
+        promptUsado?: string;
+        conceito?: Art["direcao"];
+        justificativa?: string;
+        totalAvaliados?: number;
       } = {};
       try {
         data = await res.json();
@@ -93,13 +139,33 @@ export function PersonalizerForm() {
         url: data.imageUrl,
         keyWhite: Boolean(data.needsWhiteKeying),
         conceito: texto,
+        promptUsado: data.promptUsado,
+        direcao: data.conceito,
+        justificativa: data.justificativa,
+        totalAvaliados: data.totalAvaliados,
       });
       setStatus("done");
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Tente novamente.");
       setStatus("error");
     }
-  }, [conceito, status]);
+  }, [conceito, status, reference]);
+
+  const baixarArteImpressao = useCallback(async () => {
+    if (!art) return;
+    setBaixando(true);
+    try {
+      const img = await loadImage(art.url);
+      downloadPrintSheet(img, "presentei-arte-impressao.png", {
+        fullBleed: true,
+        guides: true,
+      });
+    } catch {
+      setErrorMsg("Não consegui montar o arquivo de impressão.");
+    } finally {
+      setBaixando(false);
+    }
+  }, [art]);
 
   const busy = status === "loading";
 
@@ -128,6 +194,7 @@ export function PersonalizerForm() {
           <MugViewer
             artImageUrl={art?.url}
             keyWhite={art?.keyWhite}
+            fullBleed
             className="h-[440px] w-full sm:h-[540px]"
           />
 
@@ -260,6 +327,68 @@ export function PersonalizerForm() {
           </div>
         </div>
 
+        {/* Reference image */}
+        <div className="mt-6">
+          <p className="mb-2.5 text-[0.64rem] font-black uppercase tracking-[.16em] text-[var(--brand-muted-light)]">
+            Imagem de referência <span className="normal-case tracking-normal font-bold">(opcional)</span>
+          </p>
+
+          {reference ? (
+            <div className="flex items-center gap-4 rounded-[var(--radius-md)] border border-[var(--brand-border-soft)] bg-white p-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={reference}
+                alt="Referência enviada"
+                className="h-16 w-16 rounded-[var(--radius-sm)] object-cover"
+              />
+              <div className="flex-1">
+                <p className="text-[0.82rem] font-bold text-[var(--brand-black)]">
+                  Referência anexada
+                </p>
+                <p className="mt-0.5 text-[0.72rem] leading-5 text-[var(--brand-muted)]">
+                  A IA vai usar como base e redesenhar no estilo da caneca.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setReference(null)}
+                disabled={busy}
+                aria-label="Remover referência"
+                className="shrink-0 rounded-full p-2 text-[var(--brand-muted-light)] transition-colors hover:bg-[var(--brand-surface)] hover:text-[var(--brand-black)] disabled:opacity-40"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <label
+              className={[
+                "flex cursor-pointer items-center gap-3 rounded-[var(--radius-md)]",
+                "border-2 border-dashed border-[var(--brand-border)] bg-white px-4 py-3.5",
+                "transition-colors hover:border-[var(--brand-orange)]",
+                busy ? "pointer-events-none opacity-50" : "",
+              ].join(" ")}
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange-deep)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="M21 15l-5-5L5 21" />
+              </svg>
+              <span className="text-[0.82rem] font-bold text-[var(--brand-muted)]">
+                Enviar foto do pet, do casal, de um desenho…
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                disabled={busy}
+                onChange={(e) => pickReference(e.target.files?.[0])}
+              />
+            </label>
+          )}
+        </div>
+
         {/* Generate */}
         <button
           type="button"
@@ -333,6 +462,52 @@ export function PersonalizerForm() {
               quantas quiser, sem custo.
             </p>
 
+            <p className="mt-4 text-[0.76rem] leading-6 text-[var(--brand-muted-light)]">
+              O arquivo de impressão sai em {PRINT_SIZE.widthCm}×{PRINT_SIZE.heightCm}&nbsp;cm
+              a {PRINT_SIZE.dpi}&nbsp;DPI, com sangria e marca de corte — pronto para a sublimadora.
+            </p>
+
+            {art?.direcao && (
+              <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--brand-border-soft)] bg-white p-4">
+                <p className="text-[0.6rem] font-black uppercase tracking-[.16em] text-[var(--brand-orange-deep)]">
+                  Conceito escolhido
+                  {art.totalAvaliados ? ` · entre ${art.totalAvaliados} avaliados` : ""}
+                </p>
+                <p className="font-display mt-2 text-[1.15rem] font-black tracking-[-.03em]">
+                  {art.direcao.titulo}
+                </p>
+                <p className="mt-1.5 text-[0.84rem] leading-6 text-[var(--brand-muted)]">
+                  {art.direcao.descricao}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+                  <p className="text-[0.72rem] text-[var(--brand-muted-light)]">
+                    <span className="font-black uppercase tracking-[.1em]">Paleta</span>{" "}
+                    {art.direcao.paleta}
+                  </p>
+                  <p className="text-[0.72rem] text-[var(--brand-muted-light)]">
+                    <span className="font-black uppercase tracking-[.1em]">Estilo</span>{" "}
+                    {art.direcao.estilo}
+                  </p>
+                </div>
+                {art.justificativa && (
+                  <p className="mt-3 border-t border-[var(--brand-border-soft)] pt-3 text-[0.8rem] leading-6 text-[var(--brand-muted)]">
+                    {art.justificativa}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {art?.promptUsado && (
+              <details className="mt-6 rounded-[var(--radius-md)] border border-[var(--brand-border-soft)] bg-[var(--brand-surface)] px-4 py-3">
+                <summary className="cursor-pointer text-[0.74rem] font-black uppercase tracking-[.14em] text-[var(--brand-muted)]">
+                  Como a IA entendeu sua ideia
+                </summary>
+                <p className="mt-3 text-[0.82rem] leading-6 text-[var(--brand-muted)]">
+                  {art.promptUsado}
+                </p>
+              </details>
+            )}
+
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href="/produtos/caneca-branca"
@@ -349,20 +524,21 @@ export function PersonalizerForm() {
                 </svg>
               </Link>
               {art && (
-                <a
-                  href={art.url}
-                  download="minha-arte-presentei.png"
+                <button
+                  type="button"
+                  onClick={baixarArteImpressao}
+                  disabled={baixando}
                   className={[
                     "inline-flex items-center gap-2 rounded-[var(--radius-md)] border-2 px-5 py-3.5",
                     "border-[var(--brand-border)] text-[0.84rem] font-black text-[var(--brand-black)]",
-                    "transition-colors hover:border-[var(--brand-black)]",
+                    "transition-colors hover:border-[var(--brand-black)] disabled:opacity-50",
                   ].join(" ")}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
                   </svg>
-                  Baixar arte
-                </a>
+                  {baixando ? "Montando…" : "Baixar arte para impressão"}
+                </button>
               )}
             </div>
           </div>

@@ -86,14 +86,23 @@ export function MugMesh({ artTexture, autoSpin = false }: Props) {
               true,
             ]}
           />
+          {/*
+            The emissive map is what keeps the print vivid. Without it the
+            art is only ever as bright as the light falling on it, and the
+            restrained studio lighting that makes the ceramic look right
+            leaves the colours muddy.
+          */}
           <meshPhysicalMaterial
             map={artTexture}
+            emissiveMap={artTexture}
+            emissive="#ffffff"
+            emissiveIntensity={0.42}
             transparent
-            roughness={0.26}
+            roughness={0.34}
             metalness={0}
             clearcoat={1}
-            clearcoatRoughness={0.06}
-            envMapIntensity={0.55}
+            clearcoatRoughness={0.08}
+            envMapIntensity={0.28}
             depthWrite={false}
             side={THREE.FrontSide}
           />

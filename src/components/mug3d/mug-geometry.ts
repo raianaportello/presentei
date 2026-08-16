@@ -14,11 +14,18 @@ import * as THREE from "three";
 export const MUG = {
   radius: 1.0,
   height: 2.32,
-  /** Vertical span of the printable sublimation area. */
-  printBottom: 0.42,
-  printTop: 1.92,
-  /** Fraction of circumference the art wraps around. */
-  printArc: 0.62,
+  /**
+   * Vertical span of the printable sublimation area.
+   * A real 11oz wrap is 8cm tall on a 9.5cm mug, leaving a bare band at
+   * the rim and the foot.
+   */
+  printBottom: 0.14,
+  printTop: 2.18,
+  /**
+   * Fraction of circumference the art wraps around.
+   * Full-bleed wraps the whole barrel; the seam lands behind the handle.
+   */
+  printArc: 0.814,
 } as const;
 
 /**

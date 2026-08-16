@@ -8,14 +8,22 @@
 import * as THREE from "three";
 import { MUG } from "./mug-geometry";
 
-const STRIP_W = 2560;
-const STRIP_H = 1024;
+// Matches the 210 x 95 mm sheet at 300 DPI, so the preview and the
+// printed wrap are the same geometry — what you spin is what you get.
+const STRIP_W = 2480;
+const STRIP_H = 1122;
 
 type BuildOpts = {
   /** Rotate the print around the mug, in turns (0..1). */
   offset?: number;
   /** Knock out a flat white background (DALL·E 3 has no alpha). */
   keyWhite?: boolean;
+  /**
+   * Full-bleed: the artwork covers the entire barrel, background
+   * included, the way a wrapped sublimation print actually looks.
+   * When false the art floats as isolated elements on bare ceramic.
+   */
+  fullBleed?: boolean;
 };
 
 /**
@@ -72,8 +80,51 @@ function artBox() {
 }
 
 /**
- * Wrap a generated image around the mug.
- * The image is fitted (contain) inside the print area so nothing crops.
+ * Finds the bounding box of actual content, ignoring transparent (or,
+ * for the DALL·E path, near-white) margins.
+ *
+ * Image models habitually return the subject floating in a large empty
+ * field. Printed as-is that reads as a small sticker in the middle of
+ * the mug, so the margin has to go before scaling.
+ */
+function contentBounds(
+  img: HTMLImageElement,
+  treatWhiteAsEmpty: boolean
+): { x: number; y: number; w: number; h: number } {
+  const probe = document.createElement("canvas");
+  probe.width = img.width;
+  probe.height = img.height;
+  const pctx = probe.getContext("2d", { willReadFrequently: true })!;
+  pctx.drawImage(img, 0, 0);
+
+  const { data } = pctx.getImageData(0, 0, img.width, img.height);
+  let minX = img.width, minY = img.height, maxX = -1, maxY = -1;
+
+  for (let y = 0; y < img.height; y++) {
+    for (let x = 0; x < img.width; x++) {
+      const i = (y * img.width + x) * 4;
+      const alpha = data[i + 3];
+      if (alpha < 12) continue;
+      if (treatWhiteAsEmpty) {
+        const min = Math.min(data[i], data[i + 1], data[i + 2]);
+        if (min > 244) continue;
+      }
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
+    }
+  }
+
+  // Entirely empty — fall back to the whole frame rather than divide by zero.
+  if (maxX < 0) return { x: 0, y: 0, w: img.width, h: img.height };
+
+  return { x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 };
+}
+
+/**
+ * Wrap a generated image around the mug, trimmed and scaled to command
+ * the print area rather than float in the middle of it.
  */
 export function buildImageTexture(
   img: HTMLImageElement,
@@ -81,19 +132,57 @@ export function buildImageTexture(
 ): THREE.CanvasTexture {
   const canvas = newStrip();
   const ctx = canvas.getContext("2d")!;
+
+  // ── Full-bleed: crop the composed band, never stretch ──
+  //
+  // The sheet is 210x95mm (2.21:1); gpt-image-1 only emits 3:2. Rather
+  // than stretch (which smears the background into bands) or blind-crop
+  // (which beheads the subject), the art director composes the design
+  // inside the central 68% of the frame and treats the rest as bleed.
+  // Here we simply take that band. Aspect matches exactly, so every
+  // pixel maps 1:1 and nothing distorts.
+  if (opts.fullBleed) {
+    const targetAspect = STRIP_W / STRIP_H;
+    let sw = img.width;
+    let sh = Math.round(sw / targetAspect);
+
+    if (sh > img.height) {
+      // Portrait-ish source: bind on height instead.
+      sh = img.height;
+      sw = Math.round(sh * targetAspect);
+    }
+
+    const sx = Math.round((img.width - sw) / 2);
+    const sy = Math.round((img.height - sh) / 2);
+
+    ctx.filter = "saturate(1.28) contrast(1.08)";
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, STRIP_W, STRIP_H);
+    ctx.filter = "none";
+
+    return finalize(canvas, opts.offset);
+  }
+
   const { x: boxX, w: boxW } = artBox();
 
   // Print area occupies the full strip height with a small safety margin.
-  const margin = STRIP_H * 0.06;
+  const margin = STRIP_H * 0.05;
   const boxH = STRIP_H - margin * 2;
 
-  const scale = Math.min(boxW / img.width, boxH / img.height);
-  const dw = img.width * scale;
-  const dh = img.height * scale;
+  const src = contentBounds(img, Boolean(opts.keyWhite));
+
+  // `contain` on the trimmed content: fills whichever axis binds first,
+  // so wide artwork wraps around the mug and tall artwork fills its height.
+  const scale = Math.min(boxW / src.w, boxH / src.h);
+  const dw = src.w * scale;
+  const dh = src.h * scale;
   const dx = boxX + (boxW - dw) / 2;
   const dy = margin + (boxH - dh) / 2;
 
-  ctx.drawImage(img, dx, dy, dw, dh);
+  // Compensate for two desaturating stages downstream: the scene's ACES
+  // tone mapping, and the way the glaze shader lights the print.
+  ctx.filter = "saturate(1.34) contrast(1.10)";
+  ctx.drawImage(img, src.x, src.y, src.w, src.h, dx, dy, dw, dh);
+  ctx.filter = "none";
 
   if (opts.keyWhite) {
     keyOutWhite(ctx, Math.floor(dx), Math.floor(dy), Math.ceil(dw), Math.ceil(dh));
