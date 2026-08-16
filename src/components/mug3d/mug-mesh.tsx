@@ -48,27 +48,6 @@ export function MugMesh({ artTexture, autoSpin = false }: Props) {
     return m;
   }, [glaze]);
 
-  // The print sleeve: transparent everywhere the art isn't.
-  const printMat = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        transparent: true,
-        roughness: 0.26,
-        metalness: 0,
-        clearcoat: 1,
-        clearcoatRoughness: 0.06,
-        envMapIntensity: 0.55,
-        depthWrite: false,
-        side: THREE.FrontSide,
-      }),
-    []
-  );
-
-  if (printMat.map !== (artTexture ?? null)) {
-    printMat.map = artTexture ?? null;
-    printMat.needsUpdate = true;
-  }
-
   const printHeight = MUG.printTop - MUG.printBottom;
   const printCentre = (MUG.printTop + MUG.printBottom) / 2;
 
@@ -90,9 +69,13 @@ export function MugMesh({ artTexture, autoSpin = false }: Props) {
         receiveShadow
       />
 
-      {/* Printed art, 5mm proud of the wall so it never z-fights */}
+      {/*
+        Printed art, sitting a hair proud of the wall so it never z-fights.
+        FrontSide only: the back of the sleeve is occluded by the opaque
+        body, which is what keeps the print from ghosting through.
+      */}
       {artTexture && (
-        <mesh position={[0, printCentre, 0]} material={printMat}>
+        <mesh position={[0, printCentre, 0]}>
           <cylinderGeometry
             args={[
               MUG.radius * 1.004,
@@ -102,6 +85,17 @@ export function MugMesh({ artTexture, autoSpin = false }: Props) {
               1,
               true,
             ]}
+          />
+          <meshPhysicalMaterial
+            map={artTexture}
+            transparent
+            roughness={0.26}
+            metalness={0}
+            clearcoat={1}
+            clearcoatRoughness={0.06}
+            envMapIntensity={0.55}
+            depthWrite={false}
+            side={THREE.FrontSide}
           />
         </mesh>
       )}

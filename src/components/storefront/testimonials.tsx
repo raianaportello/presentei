@@ -79,7 +79,7 @@ export function Testimonials() {
           <Stars />
           <blockquote className="mt-5">
             <p className="font-display mx-auto max-w-2xl text-[1.6rem] font-black leading-[1.1] tracking-[-.04em] text-[var(--brand-black)] sm:text-[2rem]">
-              "Avaliações reais estarão aqui antes do lançamento. Sem nomes ou depoimentos inventados."
+              &ldquo;Avaliações reais estarão aqui antes do lançamento. Sem nomes ou depoimentos inventados.&rdquo;
             </p>
           </blockquote>
           <p className="mt-5 text-sm text-[var(--brand-muted)]">

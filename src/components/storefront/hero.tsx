@@ -97,7 +97,7 @@ export function Hero() {
           {/* Mug + price badge, centered */}
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
             {/* Ceramic mug — live 3D, slow turntable */}
-            <MugShowcase className="h-[300px] w-full sm:h-[380px]" />
+            <MugShowcase className="h-[340px] w-full sm:h-[440px]" />
 
             {/* Price badge */}
             <div

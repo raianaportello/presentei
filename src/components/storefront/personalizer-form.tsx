@@ -4,6 +4,7 @@
  * spin it around, approve it.
  */
 import { useState, useCallback, useEffect } from "react";
+import Link from "next/link";
 import { MugViewer } from "@/components/mug3d/mug-viewer";
 
 type Status = "idle" | "loading" | "done" | "error";
@@ -48,7 +49,6 @@ export function PersonalizerForm() {
   /* ── Cycle the loading copy ── */
   useEffect(() => {
     if (status !== "loading") return;
-    setStep(0);
     const id = setInterval(
       () => setStep((s) => Math.min(s + 1, LOADING_STEPS.length - 1)),
       4200
@@ -62,6 +62,7 @@ export function PersonalizerForm() {
 
     setStatus("loading");
     setErrorMsg("");
+    setStep(0);
 
     try {
       const res = await fetch("/api/gerar-arte", {
@@ -333,7 +334,7 @@ export function PersonalizerForm() {
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <a
+              <Link
                 href="/produtos/caneca-branca"
                 className={[
                   "inline-flex items-center gap-2 rounded-[var(--radius-md)] px-6 py-3.5",
@@ -346,7 +347,7 @@ export function PersonalizerForm() {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
-              </a>
+              </Link>
               {art && (
                 <a
                   href={art.url}
